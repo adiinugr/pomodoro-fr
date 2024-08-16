@@ -1,0 +1,54 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .clock {
+    @apply w-full aspect-square rounded-full relative;
+  }
+
+  .number-hours,
+  .diallines,
+  .circle {
+    @apply w-full h-full rounded-full absolute;
+  }
+
+  .circle {
+    span {
+      @apply absolute inset-[50px] text-center rounded-full;
+    }
+  }
+
+  .number-hours {
+    span {
+      @apply absolute inset-[-28px] text-center;
+
+      p {
+        @apply text-lg;
+      }
+    }
+  }
+
+  .diallines {
+    span {
+      @apply absolute inset-[10px] text-center;
+
+      &:nth-of-type(5n) {
+        p {
+          @apply w-[3px] h-[16px];
+        }
+      }
+
+      p {
+        @apply w-[2px] h-[10px] bg-white inline-block;
+      }
+    }
+  }
+}
+
+@font-face {
+  font-family: 'Degular';
+  src: url('/fonts/Degular-Bold.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+}
