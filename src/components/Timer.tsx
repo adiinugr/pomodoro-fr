@@ -11,6 +11,8 @@ import Tasks from "./Task"
 type Props = {
   timerSetting: any
   setTimerSetting: (value: any) => void
+  repeatTime: number
+  setRepeatTime: (value: number) => void
   currentTime: number
   stopwatchState: string
   setStopWatchState: (value: string) => void
@@ -23,6 +25,8 @@ type Props = {
 const Timer = ({
   stopwatchState,
   timerSetting,
+  repeatTime,
+  setRepeatTime,
   setTimerSetting,
   setStopWatchState,
   resetState
@@ -53,8 +57,21 @@ const Timer = ({
 
     if (currentTime === 0) {
       setStopWatchState("stop")
+
+      if (repeatTime < 4) {
+        setRepeatTime(repeatTime + 1)
+      } else {
+        setRepeatTime(0)
+      }
     }
-  }, [currentSecondValue, currentTime, setStopWatchState, stopwatchState])
+  }, [
+    currentSecondValue,
+    currentTime,
+    repeatTime,
+    setRepeatTime,
+    setStopWatchState,
+    stopwatchState
+  ])
 
   useEffect(() => {
     setCurrentSecondValue(secondValue)
@@ -101,7 +118,9 @@ const Timer = ({
     <>
       <div className="flex justify-between">
         <div className="">
-          <p className="text-[35px] text-white font-semibold">Pomodorotimer.fr</p>
+          <p className="text-[35px] text-white font-semibold">
+            Pomodorotimer.fr
+          </p>
         </div>
         <div className="text-white text-end">
           <p className="text-[26px] font-semibold">
@@ -165,7 +184,7 @@ const Timer = ({
           </div>
         </div>
       </div>
-      
+
       <TimerSettingModal
         isOpen={isOpenModal}
         closeModal={() => setisOpenModal(false)}
