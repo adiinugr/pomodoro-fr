@@ -2,7 +2,7 @@
 
 import react from "react"
 import Navbar from "@/components/Navbar"
-import FilterCategory2 from "@/components/FilterCategory2"
+import HomeScreen from "@/components/pages/HomeScreen"
 
 export default function Home() {
   const jsonLd = {
@@ -19,10 +19,10 @@ export default function Home() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <div className="relative">
-        <div className=" bg-opacity-[96%] w-full h-full">
+        <div className="bg-opacity-[96%] w-full h-full">
           <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
             <div className="w-full bg-transparent rounded-3xl flex flex-col items-center">
-              <FilterCategory2 />
+              <HomeScreen />
             </div>
           </div>
         </div>

@@ -1,19 +1,29 @@
 "use client"
+
 import React, { useState, useEffect } from "react"
-import { MdTask, MdTimer } from "react-icons/md"
+
+// ** Third Party
+import {  MdTimer } from "react-icons/md"
 import { GiTomato } from "react-icons/gi"
-import Timer from "@/components/Timer"
-import { useTimerSetting } from "@/context/TimerSettingContext"
 import { IoIosRefresh, IoMdCreate, IoMdTrash } from "react-icons/io"
-import { RiFocusFill, RiTaskFill, RiTimerFill } from "react-icons/ri"
+import { RiFocusFill, RiTimerFill } from "react-icons/ri"
 import { FaCloudShowersHeavy } from "react-icons/fa6"
-import clsxm from "@/lib/clsxm"
 import { IoSettingsSharp } from "react-icons/io5"
 import { IoMdClose } from "react-icons/io"
 import { FaPlus } from "react-icons/fa"
-import AddTask from "./task/AddTask"
+import clsxm from "@/lib/clsxm"
+
+// ** Components
+import Timer from "@/components/timer/Timer"
+
+// ** Context
+import { useTimerSetting } from "@/context/TimerSettingContext"
+
+// ** Hooks
 import useLocalStorage from "@/hooks/useLocalStorage"
-import EditTask from "./task/EditTask"
+
+import EditTask from "@/components/task/EditTask"
+import AddTask from "@/components/task/AddTask"
 
 const PlayPauseButton = ({
   stopwatchState,
@@ -45,7 +55,7 @@ const PlayPauseButton = ({
   )
 }
 
-const FilterCategory2: React.FC = () => {
+const HomeScreen: React.FC = () => {
   const { timerSetting, setTimerSetting } = useTimerSetting()
 
   const [nav, setNav] = useState(false)
@@ -93,7 +103,7 @@ const FilterCategory2: React.FC = () => {
       setSoundInstance(null)
       setIsPlaying(false)
     }
-  }, [selectedSound])
+  }, [selectedSound, soundInstance])
 
   // Update taskSetting whenever focusTime, shortBreakTime, or longBreakTime changes
   useEffect(() => {
@@ -488,7 +498,7 @@ const FilterCategory2: React.FC = () => {
         <div className="flex justify-end mt-[82px]">
           <div
             onClick={() => setNav(!nav)}
-            className="p-1 px-2 rounded-md bg-[#2e2446] text-white hover:bg-[#7432ff] cursor-pointer"
+            className="fixed bottom-5 right-5 p-1 px-2 rounded-md bg-[#2e2446] text-white hover:bg-[#7432ff] cursor-pointer"
           >
             {nav ? (
               <IoMdClose size={30} className="mt-[2px]" />
@@ -1012,4 +1022,4 @@ const FilterCategory2: React.FC = () => {
   )
 }
 
-export default FilterCategory2
+export default HomeScreen

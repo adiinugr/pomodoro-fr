@@ -2,11 +2,6 @@
 
 import React, { useEffect, useState } from "react"
 import Pie from "./Pie"
-import TimerSettingModal from "@/components/timer-setting/TimerSettingModal"
-import TimerSettingList from "./timer-setting/TimerSettingList"
-
-import { IoMdSettings } from "react-icons/io"
-import Tasks from "./Task"
 
 type Props = {
   timerSetting: any
@@ -133,14 +128,6 @@ const Timer = ({
       </div>
       <div className="flex justify-center">
         <div className="w-[340px] aspect-square flex flex-col items-center justify-center isolate">
-          <div className="mb-10">
-            <Tasks
-              id="taskDescription"
-              name="description"
-              value={description}
-              onChange={handleChange}
-            />
-          </div>
           <div className="clock z-[-1] text-white">
             {Array.from({ length: 12 }).map((_, i) => (
               <div key={i} className="number-hours">
@@ -184,18 +171,6 @@ const Timer = ({
           </div>
         </div>
       </div>
-
-      <TimerSettingModal
-        isOpen={isOpenModal}
-        closeModal={() => setisOpenModal(false)}
-      />
-      <button
-        onClick={() => setisOpenModal(!isOpenModal)}
-        className="fixed left-10 bottom-10 bg-white rounded-full p-2"
-        title="button"
-      >
-        <IoMdSettings size={30} className="text-tm-red" />
-      </button>
     </>
   )
 }
