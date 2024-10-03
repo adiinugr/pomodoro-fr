@@ -1,7 +1,5 @@
 "use client"
 
-import react from "react"
-import Navbar from "@/components/Navbar"
 import HomeScreen from "@/components/pages/HomeScreen"
 
 export default function Home() {
