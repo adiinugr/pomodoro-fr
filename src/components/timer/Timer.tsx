@@ -1,6 +1,8 @@
 "use client"
 
 import React, { useEffect, useState } from "react"
+
+//** Components */
 import Pie from "./Pie"
 
 type Props = {
@@ -101,13 +103,6 @@ const Timer = ({
       }
     }
   }, [resetState.status, resetState.type])
-
-  const [isOpenModal, setisOpenModal] = useState<boolean>(false)
-  const [description, setDescription] = useState("")
-
-  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setDescription(e.target.value)
-  }
 
   return (
     <>

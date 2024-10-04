@@ -8,7 +8,7 @@ import { GiTomato } from "react-icons/gi"
 import { IoIosRefresh, IoMdCreate, IoMdTrash } from "react-icons/io"
 import { RiFocusFill, RiTimerFill } from "react-icons/ri"
 import { FaCloudShowersHeavy } from "react-icons/fa6"
-import { IoSettingsSharp } from "react-icons/io5"
+import { IoSettings, IoSettingsSharp } from "react-icons/io5"
 import { IoMdClose } from "react-icons/io"
 import { FaPlus } from "react-icons/fa"
 import clsxm from "@/lib/clsxm"
@@ -25,6 +25,9 @@ import useLocalStorage from "@/hooks/useLocalStorage"
 import EditTask from "@/components/task/EditTask"
 import AddTask from "@/components/task/AddTask"
 import Sidebar from "@/components/Sidebar"
+import { useSidebar } from "@/context/SidebarContext"
+import Image from "next/image"
+import { useGlobalSetting } from "@/context/GlobalSettingContext"
 
 const PlayPauseButton = ({
   stopwatchState,
@@ -58,6 +61,8 @@ const PlayPauseButton = ({
 
 const HomeScreen: React.FC = () => {
   const { timerSetting, setTimerSetting } = useTimerSetting()
+  const { setIsOpenSidebar } = useSidebar()
+  const { setting } = useGlobalSetting()
 
   const [nav, setNav] = useState(false)
   const [activeFilter2, setActiveFilter2] = useState<string>("focus-theme")
@@ -269,173 +274,168 @@ const HomeScreen: React.FC = () => {
   }
 
   return (
-    <div
-      className="bg-cover bg-no-repeat bg-center w-full h-screen p-6 py-10 md:py-10"
-      style={{
-        backgroundImage: `url(${bgImage})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center"
-      }}
-    >
+    <div className="w-full h-screen p-6 py-10 md:py-10 isolate">
+      <Image
+        src={setting.background}
+        fill
+        alt="background"
+        className="absolute object-cover z-[-1]"
+      />
+
       <div className="w-full">
-        <div className="bg-cover bg-no-repeat bg-center p-1 rounded-xl">
-          <div className="">
-            <div className="">
-              <div className="">
-                <div>
-                  <Timer
-                    timerSetting={timerSetting}
-                    setTimerSetting={setTimerSetting}
-                    stopwatchState={stopwatchState}
-                    currentTime={currentTime}
-                    setStopWatchState={setStopWatchState}
-                    resetState={resetState}
-                    repeatTime={repeatTime}
-                    setRepeatTime={setRepeatTime}
-                  />{" "}
-                </div>
-              </div>
-              <div className="flex justify-center mt-10">
-                <div className="bg-[#2e2446] rounded-full flex items-center gap-2 p-2">
-                  {[1, 2, 3, 4].map((item, index) => (
-                    <GiTomato
-                      key={item}
-                      size={25}
-                      className={`${
-                        repeatTime > index ? "text-[#ff5c5c]" : "text-[#fff3e2]"
-                      }`}
-                    />
-                  ))}
-                </div>
-              </div>
+        <div>
+          <div>
+            <Timer
+              timerSetting={timerSetting}
+              setTimerSetting={setTimerSetting}
+              stopwatchState={stopwatchState}
+              currentTime={currentTime}
+              setStopWatchState={setStopWatchState}
+              resetState={resetState}
+              repeatTime={repeatTime}
+              setRepeatTime={setRepeatTime}
+            />{" "}
+          </div>
+
+          <div className="flex justify-center mt-10">
+            <div className="bg-[#2e2446] rounded-full flex items-center gap-2 p-2">
+              {[1, 2, 3, 4].map((item, index) => (
+                <GiTomato
+                  key={item}
+                  size={25}
+                  className={`${
+                    repeatTime > index ? "text-[#ff5c5c]" : "text-[#fff3e2]"
+                  }`}
+                />
+              ))}
             </div>
-            <div className="p-1 md:p-2 flex justify-center py-2">
-              <div className="p-2 flex justify-center rounded-md gap-2">
-                <button
-                  onClick={() => handleSelectTimeType("pomodoro")}
-                  className={`p-3 py-4 px-5 cursor-pointer ${
-                    activeFilter === "pomodoro"
-                      ? "bg-[#ff5c5c] text-[#fff3e2] font-semibold rounded-md border-2 border-[#fff3e2]"
-                      : "text-[#ff5c5c] bg-white border-2 border-[#fff3e2] font-semibold rounded-md"
-                  }`}
-                >
-                  <div className="">
-                    <div className="flex items-center justify-between">
-                      <p className="text-sm md:text-md">Focus</p>
-                    </div>
-                    <div className="flex items-center gap-10">
-                      <MdTimer size={25} />
-                      <div className="flex items-center gap-2">
-                        <p
-                          className={`text-[25px] ${
-                            activeFilter === "pomodoro"
-                              ? "text-[#fff3e2]"
-                              : "text-black"
-                          }`}
-                        >
-                          {taskType.pomodoro.value}
-                        </p>
-                        <span
-                          className={`text-md ${
-                            activeFilter === "pomodoro"
-                              ? "text-[#fff3e2]"
-                              : "text-black"
-                          }`}
-                        >
-                          {taskType.pomodoro.timeType}
-                        </span>
-                      </div>
-                    </div>
+          </div>
+        </div>
+        <div className="p-1 md:p-2 flex justify-center py-2">
+          <div className="p-2 flex justify-center rounded-md gap-2">
+            <button
+              onClick={() => handleSelectTimeType("pomodoro")}
+              className={`p-3 py-4 px-5 cursor-pointer ${
+                activeFilter === "pomodoro"
+                  ? "bg-[#ff5c5c] text-[#fff3e2] font-semibold rounded-md border-2 border-[#fff3e2]"
+                  : "text-[#ff5c5c] bg-white border-2 border-[#fff3e2] font-semibold rounded-md"
+              }`}
+            >
+              <div className="">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm md:text-md">Focus</p>
+                </div>
+                <div className="flex items-center gap-10">
+                  <MdTimer size={25} />
+                  <div className="flex items-center gap-2">
+                    <p
+                      className={`text-[25px] ${
+                        activeFilter === "pomodoro"
+                          ? "text-[#fff3e2]"
+                          : "text-black"
+                      }`}
+                    >
+                      {taskType.pomodoro.value}
+                    </p>
+                    <span
+                      className={`text-md ${
+                        activeFilter === "pomodoro"
+                          ? "text-[#fff3e2]"
+                          : "text-black"
+                      }`}
+                    >
+                      {taskType.pomodoro.timeType}
+                    </span>
                   </div>
-                </button>
-                <button
-                  onClick={() => handleSelectTimeType("short")}
-                  className={`p-3 py-4 px-5 cursor-pointer ${
-                    activeFilter === "short"
-                      ? "bg-[#7684ff] text-[#fff3e2] font-semibold rounded-md border-2 border-[#fff3e2]"
-                      : "text-[#7684ff] bg-white border-2 border-[#fff3e2] font-semibold rounded-md"
-                  }`}
-                >
-                  <div className="">
-                    <div className="flex items-center justify-between">
-                      <p className="text-sm md:text-md">Short Break</p>
-                    </div>
-                    <div className="flex items-center gap-10">
-                      <MdTimer size={25} />
-                      <div className="flex items-center gap-2">
-                        <p
-                          className={`text-[25px] ${
-                            activeFilter === "short"
-                              ? "text-[#fff3e2]"
-                              : "text-black"
-                          }`}
-                        >
-                          {taskType.short.value}
-                        </p>
-                        <span
-                          className={`text-md ${
-                            activeFilter === "short"
-                              ? "text-[#fff3e2]"
-                              : "text-black"
-                          }`}
-                        >
-                          {taskType.short.timeType}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </button>
-                <button
-                  onClick={() => handleSelectTimeType("long")}
-                  className={`p-3 py-4 px-5 cursor-pointer ${
-                    activeFilter === "long"
-                      ? "bg-[#3d3d3d] text-[#fff3e2] font-semibold rounded-md border-2 border-[#fff3e2]"
-                      : "text-[#3d3d3d] bg-white border-2 border-[#fff3e2] font-semibold rounded-md"
-                  }`}
-                >
-                  <div className="">
-                    <div className="flex items-center justify-between">
-                      <p className="text-sm md:text-md">Long Break</p>
-                    </div>
-                    <div className="flex items-center gap-10">
-                      <MdTimer size={25} />
-                      <div className="flex items-center gap-2">
-                        <p
-                          className={`text-[25px] ${
-                            activeFilter === "long"
-                              ? "text-[#fff3e2]"
-                              : "text-black"
-                          }`}
-                        >
-                          {taskType.long.value}
-                        </p>
-                        <span
-                          className={`text-md ${
-                            activeFilter === "long"
-                              ? "text-[#fff3e2]"
-                              : "text-black"
-                          }`}
-                        >
-                          {taskType.long.timeType}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </button>
-                <div className="h-full flex gap-6 items-center justify-center">
-                  <PlayPauseButton
-                    stopwatchState={stopwatchState}
-                    handlePlay={handlePlay}
-                    handlePause={handlePause}
-                  />
-                  <button
-                    onClick={() => handleReset(activeFilter)}
-                    className="grid place-content-center text-white"
-                  >
-                    <IoIosRefresh size={34} />
-                  </button>
                 </div>
               </div>
+            </button>
+            <button
+              onClick={() => handleSelectTimeType("short")}
+              className={`p-3 py-4 px-5 cursor-pointer ${
+                activeFilter === "short"
+                  ? "bg-[#7684ff] text-[#fff3e2] font-semibold rounded-md border-2 border-[#fff3e2]"
+                  : "text-[#7684ff] bg-white border-2 border-[#fff3e2] font-semibold rounded-md"
+              }`}
+            >
+              <div className="">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm md:text-md">Short Break</p>
+                </div>
+                <div className="flex items-center gap-10">
+                  <MdTimer size={25} />
+                  <div className="flex items-center gap-2">
+                    <p
+                      className={`text-[25px] ${
+                        activeFilter === "short"
+                          ? "text-[#fff3e2]"
+                          : "text-black"
+                      }`}
+                    >
+                      {taskType.short.value}
+                    </p>
+                    <span
+                      className={`text-md ${
+                        activeFilter === "short"
+                          ? "text-[#fff3e2]"
+                          : "text-black"
+                      }`}
+                    >
+                      {taskType.short.timeType}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </button>
+            <button
+              onClick={() => handleSelectTimeType("long")}
+              className={`p-3 py-4 px-5 cursor-pointer ${
+                activeFilter === "long"
+                  ? "bg-[#3d3d3d] text-[#fff3e2] font-semibold rounded-md border-2 border-[#fff3e2]"
+                  : "text-[#3d3d3d] bg-white border-2 border-[#fff3e2] font-semibold rounded-md"
+              }`}
+            >
+              <div className="">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm md:text-md">Long Break</p>
+                </div>
+                <div className="flex items-center gap-10">
+                  <MdTimer size={25} />
+                  <div className="flex items-center gap-2">
+                    <p
+                      className={`text-[25px] ${
+                        activeFilter === "long"
+                          ? "text-[#fff3e2]"
+                          : "text-black"
+                      }`}
+                    >
+                      {taskType.long.value}
+                    </p>
+                    <span
+                      className={`text-md ${
+                        activeFilter === "long"
+                          ? "text-[#fff3e2]"
+                          : "text-black"
+                      }`}
+                    >
+                      {taskType.long.timeType}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </button>
+            <div className="h-full flex gap-6 items-center justify-center">
+              <PlayPauseButton
+                stopwatchState={stopwatchState}
+                handlePlay={handlePlay}
+                handlePause={handlePause}
+              />
+              <button
+                onClick={() => handleReset(activeFilter)}
+                className="grid place-content-center text-white"
+              >
+                <IoIosRefresh size={34} />
+              </button>
             </div>
           </div>
         </div>
@@ -494,6 +494,13 @@ const HomeScreen: React.FC = () => {
       </div>
 
       <Sidebar />
+
+      <button
+        onClick={() => setIsOpenSidebar(true)}
+        className="fixed bottom-10 right-10 text-white hover:text-gray-200 text-4xl"
+      >
+        <IoSettings />
+      </button>
     </div>
   )
 }
