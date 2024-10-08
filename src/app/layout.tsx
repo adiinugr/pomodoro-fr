@@ -1,6 +1,5 @@
 import type { Metadata } from "next"
 import { Poppins } from "next/font/google"
-import Script from "next/script"
 
 // ** CSS
 import "./globals.scss"
