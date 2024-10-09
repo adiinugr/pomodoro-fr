@@ -24,7 +24,7 @@ import useLocalStorage from "@/hooks/useLocalStorage"
 
 import EditTask from "@/components/task/EditTask"
 import AddTask from "@/components/task/AddTask"
-import Sidebar from "@/components/Sidebar"
+import Sidebar from "@/components/sidebar/Sidebar"
 import { useSidebar } from "@/context/SidebarContext"
 import Image from "next/image"
 import { useGlobalSetting } from "@/context/GlobalSettingContext"
@@ -62,7 +62,7 @@ const PlayPauseButton = ({
 const HomeScreen: React.FC = () => {
   const { timerSetting, setTimerSetting } = useTimerSetting()
   const { setIsOpenSidebar } = useSidebar()
-  const { setting } = useGlobalSetting()
+  const { background, timerOption } = useGlobalSetting()
 
   const [nav, setNav] = useState(false)
   const [activeFilter2, setActiveFilter2] = useState<string>("focus-theme")
@@ -142,19 +142,19 @@ const HomeScreen: React.FC = () => {
   const taskType = {
     pomodoro: {
       timeType: "minute",
-      value: parseInt(focusTime),
+      value: timerOption.pomodoro,
       sound: "/sound/case-closed.mp3",
       color: "#F25D52"
     },
     short: {
       timeType: "minute",
-      value: parseInt(shortBreakTime),
+      value: timerOption.short,
       sound: "/sound/case-closed.mp3",
       color: "#7684ff"
     },
     long: {
       timeType: "minute",
-      value: parseInt(longBreakTime),
+      value: timerOption.long,
       sound: "/sound/case-closed.mp3",
       color: "#3d3d3d"
     }
@@ -249,15 +249,15 @@ const HomeScreen: React.FC = () => {
       ...timerSetting,
       pomodoro: {
         ...taskType.pomodoro,
-        value: parseInt(focusTime)
+        value: timerOption.pomodoro
       },
       short: {
         ...taskType.short,
-        value: parseInt(shortBreakTime)
+        value: timerOption.short
       },
       long: {
         ...taskType.long,
-        value: parseInt(longBreakTime)
+        value: timerOption.long
       }
     })
     handleSelectTimeType(activeFilter) // Apply changes immediately to the selected task type
@@ -276,7 +276,7 @@ const HomeScreen: React.FC = () => {
   return (
     <div className="w-full h-screen p-6 py-10 md:py-10 isolate">
       <Image
-        src={setting.background}
+        src={background}
         fill
         alt="background"
         className="absolute object-cover z-[-1]"

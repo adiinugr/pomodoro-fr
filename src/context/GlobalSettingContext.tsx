@@ -14,15 +14,31 @@ type Props = {
 }
 
 interface Setting {
-  setting: {
-    background: string
+  background: string
+  timerOption: {
+    pomodoro: number
+    short: number
+    long: number
   }
+
   setBackground: (value: string) => void
+  setTimerOption: (value: {
+    pomodoro: number
+    short: number
+    long: number
+  }) => void
 }
 
 const defaultSetting: Setting = {
-  setting: { background: "/images/background/bg-1.jpg" },
-  setBackground: () => {}
+  background: "/images/background/bg-1.jpg",
+  timerOption: {
+    pomodoro: 25,
+    short: 5,
+    long: 15
+  },
+
+  setBackground: () => {},
+  setTimerOption: () => {}
 }
 
 const GlobalSettingContext = createContext<Setting>(defaultSetting)
@@ -31,10 +47,22 @@ export const GlobalSettingProvider = ({ children }: Props) => {
   const [globalSetting, setGlobalSetting] = useState<Setting>(defaultSetting)
 
   const setBackground = (value: string) =>
-    setGlobalSetting({ ...globalSetting, setting: { background: value } })
+    setGlobalSetting({ ...globalSetting, background: value })
+
+  const setTimerOption = (value: {
+    pomodoro: number
+    short: number
+    long: number
+  }) =>
+    setGlobalSetting({
+      ...globalSetting,
+      timerOption: value
+    })
 
   return (
-    <GlobalSettingContext.Provider value={{ ...globalSetting, setBackground }}>
+    <GlobalSettingContext.Provider
+      value={{ ...globalSetting, setBackground, setTimerOption }}
+    >
       {children}
     </GlobalSettingContext.Provider>
   )
