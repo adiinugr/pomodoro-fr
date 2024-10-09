@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
+
 @layer components {
   .clock {
     @apply w-full aspect-square rounded-full relative;
@@ -47,8 +55,8 @@
 }
 
 @font-face {
-  font-family: 'Degular';
-  src: url('/fonts/Degular-Bold.otf') format('opentype');
+  font-family: "Degular";
+  src: url("/fonts/Degular-Bold.otf") format("opentype");
   font-weight: 700;
   font-style: normal;
 }
