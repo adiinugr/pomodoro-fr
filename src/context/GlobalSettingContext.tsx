@@ -1,5 +1,6 @@
 "use client"
 
+import { soundData, SoundType } from "@/data/soundData"
 import {
   Dispatch,
   ReactNode,
@@ -20,6 +21,7 @@ interface Setting {
     short: number
     long: number
   }
+  sound: SoundType
 
   setBackground: (value: string) => void
   setTimerOption: (value: {
@@ -27,6 +29,7 @@ interface Setting {
     short: number
     long: number
   }) => void
+  setSound: (value: SoundType) => void
 }
 
 const defaultSetting: Setting = {
@@ -36,9 +39,11 @@ const defaultSetting: Setting = {
     short: 5,
     long: 15
   },
+  sound: soundData[0],
 
   setBackground: () => {},
-  setTimerOption: () => {}
+  setTimerOption: () => {},
+  setSound: () => {}
 }
 
 const GlobalSettingContext = createContext<Setting>(defaultSetting)
@@ -59,9 +64,13 @@ export const GlobalSettingProvider = ({ children }: Props) => {
       timerOption: value
     })
 
+  const setSound = (value: SoundType) => {
+    setGlobalSetting({ ...globalSetting, sound: value })
+  }
+
   return (
     <GlobalSettingContext.Provider
-      value={{ ...globalSetting, setBackground, setTimerOption }}
+      value={{ ...globalSetting, setBackground, setTimerOption, setSound }}
     >
       {children}
     </GlobalSettingContext.Provider>
