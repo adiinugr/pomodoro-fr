@@ -6,12 +6,8 @@ import React, { useState, useEffect } from "react"
 import { MdTimer } from "react-icons/md"
 import { GiTomato } from "react-icons/gi"
 import { IoIosRefresh, IoMdCreate, IoMdTrash } from "react-icons/io"
-import { RiFocusFill, RiTimerFill } from "react-icons/ri"
-import { FaCloudShowersHeavy } from "react-icons/fa6"
-import { IoSettings, IoSettingsSharp } from "react-icons/io5"
-import { IoMdClose } from "react-icons/io"
+import { IoSettings } from "react-icons/io5"
 import { FaPlus } from "react-icons/fa"
-import clsxm from "@/lib/clsxm"
 
 // ** Components
 import Timer from "@/components/timer/Timer"
@@ -62,28 +58,13 @@ const PlayPauseButton = ({
 const HomeScreen: React.FC = () => {
   const { timerSetting, setTimerSetting } = useTimerSetting()
   const { setIsOpenSidebar } = useSidebar()
-  const { background, timerOption } = useGlobalSetting()
-
-  const [nav, setNav] = useState(false)
-  const [activeFilter2, setActiveFilter2] = useState<string>("focus-theme")
+  const { background, timerOption, sound } = useGlobalSetting()
 
   const [activeFilter, setActiveFilter] = useState<string>("pomodoro")
-  const [headerText, setHeaderText] = useState<string>("Pomodoro")
-  const [time, setTime] = useState(25 * 60)
 
   const [stopwatchState, setStopWatchState] = useState<string>("stop")
   const [currentTime, setCurrentTime] = useState<number>(timerSetting.value)
   const [resetState, setResetState] = useState({ status: "", type: "" })
-
-  const [focusTime, setFocusTime] = useState<string>("25")
-  const [shortBreakTime, setShortBreakTime] = useState<string>("5")
-  const [longBreakTime, setLongBreakTime] = useState<string>("15")
-  const [selectedSound, setSelectedSound] = useState<
-    "nilaiClock" | "nilaiBuzzer"
-  >("nilaiClock")
-  const [isPlaying, setIsPlaying] = useState<boolean>(false)
-  const [soundInstance, setSoundInstance] = useState<Howl | null>(null)
-  const [bgImage, setBgImage] = useState("/images/background/bg-1.jpg") // To set the background image
 
   const [repeatTime, setRepeatTime] = useState<number>(0)
   const [value, setValue] = useLocalStorage("task", "")
@@ -93,69 +74,50 @@ const HomeScreen: React.FC = () => {
   const [openUpdateTaskModal, setOpenUpdateTaskModal] = useState<boolean>(false)
   const [updateSelectedId, setUpdateSelectedId] = useState("")
 
-  const sounds = {
-    nilaiClock: "/images/alarm_clock.mp3",
-    nilaiBuzzer: "/images/buzzer_alarm.mp3"
-  }
-
   useEffect(() => {
     setTask(value)
   }, [value])
 
-  useEffect(() => {
-    // Stop the current sound if the selected sound changes
-    if (soundInstance) {
-      soundInstance.stop()
-      setSoundInstance(null)
-      setIsPlaying(false)
-    }
-  }, [selectedSound, soundInstance])
-
-  // Update taskSetting whenever focusTime, shortBreakTime, or longBreakTime changes
-  useEffect(() => {
-    handleSave() // Save the task settings automatically when these values change
-  }, [focusTime, shortBreakTime, longBreakTime])
-
-  const handlePlayPause = () => {
-    if (isPlaying && soundInstance) {
-      soundInstance.pause()
-      setIsPlaying(false)
-    } else {
-      if (soundInstance) {
-        soundInstance.play()
-      } else {
-        const sound = new Howl({
-          src: [sounds[selectedSound]],
-          autoplay: true,
-          loop: true
-        })
-        setSoundInstance(sound)
-        sound.play()
+  const handleSave = () => {
+    setTimerSetting({
+      ...timerSetting,
+      pomodoro: {
+        ...taskType.pomodoro,
+        value: timerOption.pomodoro
+      },
+      short: {
+        ...taskType.short,
+        value: timerOption.short
+      },
+      long: {
+        ...taskType.long,
+        value: timerOption.short
       }
-      setIsPlaying(true)
-    }
+    })
+    handleSelectTimeType(activeFilter) // Apply changes immediately to the selected task type
   }
 
-  const handleBgChange = (image: string) => {
-    setBgImage(image)
-  }
+  useEffect(() => {
+    handleSave()
+  }, [timerOption.long, timerOption.pomodoro, timerOption.short])
+
   const taskType = {
     pomodoro: {
       timeType: "minute",
       value: timerOption.pomodoro,
-      sound: "/sound/case-closed.mp3",
+      sound: sound.soundPath,
       color: "#F25D52"
     },
     short: {
       timeType: "minute",
       value: timerOption.short,
-      sound: "/sound/case-closed.mp3",
+      sound: sound.soundPath,
       color: "#7684ff"
     },
     long: {
       timeType: "minute",
       value: timerOption.long,
-      sound: "/sound/case-closed.mp3",
+      sound: sound.soundPath,
       color: "#3d3d3d"
     }
   }
@@ -199,23 +161,6 @@ const HomeScreen: React.FC = () => {
     return
   }
 
-  const handleFilterClick2 = (filter: string) => {
-    setActiveFilter2(filter)
-    switch (filter) {
-      case "focus-theme":
-        setHeaderText("Short Break")
-        break
-      case "focus-task":
-        setHeaderText("Short Break")
-        break
-      case "sounds":
-        setHeaderText("Short Break")
-        break
-      default:
-        setHeaderText("focus-theme")
-    }
-  }
-
   const handleSelectTimeType = (type: string) => {
     if (type === "pomodoro") {
       setActiveFilter("pomodoro")
@@ -242,25 +187,6 @@ const HomeScreen: React.FC = () => {
     }
 
     return
-  }
-
-  const handleSave = () => {
-    setTimerSetting({
-      ...timerSetting,
-      pomodoro: {
-        ...taskType.pomodoro,
-        value: timerOption.pomodoro
-      },
-      short: {
-        ...taskType.short,
-        value: timerOption.short
-      },
-      long: {
-        ...taskType.long,
-        value: timerOption.long
-      }
-    })
-    handleSelectTimeType(activeFilter) // Apply changes immediately to the selected task type
   }
 
   const handleDeleteTask = (id: any) => {

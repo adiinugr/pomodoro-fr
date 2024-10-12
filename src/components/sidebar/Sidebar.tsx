@@ -1,4 +1,6 @@
-import React from "react"
+"use client"
+
+import React, { useEffect, useState } from "react"
 import Image from "next/image"
 
 // ** Third Party
@@ -124,9 +126,41 @@ const backgroundData = [
 type Props = {}
 
 function Sidebar({}: Props) {
+  const [isPlaying, setIsPlaying] = useState<boolean>(false)
+  const [soundInstance, setSoundInstance] = useState<Howl | null>(null)
+
   const { isOpenSidebar, setIsOpenSidebar } = useSidebar()
   const { timerOption, sound, setBackground, setTimerOption, setSound } =
     useGlobalSetting()
+
+  useEffect(() => {
+    if (soundInstance) {
+      soundInstance.stop()
+      setSoundInstance(null)
+      setIsPlaying(false)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sound])
+
+  const handlePlayPause = () => {
+    if (isPlaying && soundInstance) {
+      soundInstance.pause()
+      setIsPlaying(false)
+    } else {
+      if (soundInstance) {
+        soundInstance.play()
+      } else {
+        const audio = new Howl({
+          src: [sound.soundPath],
+          autoplay: true,
+          loop: true
+        })
+        setSoundInstance(audio)
+        audio.play()
+      }
+      setIsPlaying(true)
+    }
+  }
 
   const handleChangeTimerOption = (e: {
     target: { value: any; name: any }
@@ -289,326 +323,81 @@ function Sidebar({}: Props) {
                   step="0.05"
                   id="alertVolume"
                   name="alertVolume"
-                  // onChange={(e) => {
-                  //   if (soundInstance) {
-                  //     soundInstance.volume(parseFloat(e.target.value))
-                  //   }
-                  // }}
+                  onChange={(e) => {
+                    if (soundInstance) {
+                      soundInstance.volume(parseFloat(e.target.value))
+                    }
+                  }}
                 />
               </div>
               <button
                 className="p-2 py-3 px-6 bg-[#ffbe18] hover:bg-[#f1c145] text-[#201f2a] rounded-xl text-[18px] font-semibold mb-6"
-                // onClick={handlePlayPause}
+                onClick={handlePlayPause}
               >
-                {/* {isPlaying ? "Pause" : "Play"} */}
+                {isPlaying ? "Pause" : "Play"}
               </button>
 
               <RadioGroup
                 value={sound}
                 onChange={setSound}
                 aria-label="Server size"
+                className="grid gap-3"
               >
-                {soundData.map((sound) => (
-                  <Field key={sound.id} className="flex items-center gap-2">
-                    <Radio
-                      value={sound}
-                      className="group flex size-5 items-center justify-center rounded-full border bg-white data-[checked]:bg-blue-400"
-                    >
-                      <span className="invisible size-2 rounded-full bg-white group-data-[checked]:visible" />
-                    </Radio>
-                    <Label className="flex items-center justify-center gap-2">
-                      <span className="text-[18px]">{sound.icon}</span>
-                      <p className="text-[18px] font-semibold text-white">
-                        {sound.title}
-                      </p>
-                    </Label>
-                  </Field>
-                ))}
-              </RadioGroup>
+                {soundData
+                  .filter((sound) => sound.isPremium === false)
+                  .map((sound) => (
+                    <Field key={sound.id} className="flex items-center gap-2">
+                      <Radio
+                        value={sound}
+                        className="group flex size-4 items-center justify-center rounded-full border bg-white data-[checked]:bg-blue-400"
+                      >
+                        <span className="invisible size-2 rounded-full bg-white group-data-[checked]:visible" />
+                      </Radio>
+                      <Label className="flex items-center justify-center gap-2">
+                        <span className="text-[18px]">{sound.icon}</span>
+                        <p className="text-[18px] font-semibold text-white">
+                          {sound.title}
+                        </p>
+                      </Label>
+                    </Field>
+                  ))}
 
-              {/* Premium Sound */}
-              <div className="flex items-center gap-2 mb-6">
-                <p className="text-[24px] font-semibold text-white">
-                  More Sounds
-                </p>
-                <Image
-                  src={"/images/plus.svg"}
-                  className="rounded-lg"
-                  width={60}
-                  height={100}
-                  alt=""
-                />
-              </div>
-              <div className="flex items-center gap-4 mb-3">
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" className=" text-white" disabled />
-                  <span className="text-[18px] text-[#505050]">🚃</span>
-                  <p className="text-[18px] font-semibold text-[#808080]">
-                    Commuter Train
+                <div className="flex items-center gap-2 mb-2 mt-8">
+                  <p className="text-[24px] font-semibold text-white">
+                    More Sounds
                   </p>
-                </label>
-              </div>
-              <div className="flex items-center gap-4 mb-3">
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" className=" text-white" disabled />
-                  <span className="text-[18px] text-[#505050]">☕️</span>
-                  <p className="text-[18px] font-semibold text-[#808080]">
-                    Street Café
-                  </p>
-                </label>
-              </div>
-              <div className="flex items-center gap-4 mb-3">
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" className=" text-white" disabled />
-                  <span className="text-[18px] text-[#505050]">📚</span>
-                  <p className="text-[18px] font-semibold text-[#808080]">
-                    Japanese Library
-                  </p>
-                </label>
-              </div>
-              <div className="flex items-center gap-4 mb-3">
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" className=" text-white" disabled />
-                  <span className="text-[18px] text-[#505050]">🚕</span>
-                  <p className="text-[18px] font-semibold text-[#808080]">
-                    NYC Morning
-                  </p>
-                </label>
-              </div>
-              <div className="flex items-center gap-4 mb-3">
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" className=" text-white" disabled />
-                  <span className="text-[18px] text-[#505050]">☔️</span>
-                  <p className="text-[18px] font-semibold text-[#808080]">
-                    Light Rain
-                  </p>
-                </label>
-              </div>
-              <div className="flex items-center gap-4 mb-3">
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" className=" text-white" disabled />
-                  <span className="text-[18px] text-[#505050]">🌧️</span>
-                  <p className="text-[18px] font-semibold text-[#808080]">
-                    Heavy Rain
-                  </p>
-                </label>
-              </div>
-              <div className="flex items-center gap-4 mb-3">
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" className=" text-white" disabled />
-                  <span className="text-[18px] text-[#505050]">⛈️</span>
-                  <p className="text-[18px] font-semibold text-[#808080]">
-                    Thunderstorm
-                  </p>
-                </label>
-              </div>
-              <div className="flex items-center gap-4 mb-3">
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" className=" text-white" disabled />
-                  <span className="text-[18px] text-[#505050]">🧺</span>
-                  <p className="text-[18px] font-semibold text-[#808080]">
-                    Countryside Morning
-                  </p>
-                </label>
-              </div>
-              <div className="flex items-center gap-4 mb-3">
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" className=" text-white" disabled />
-                  <span className="text-[18px] text-[#505050]">🪵</span>
-                  <p className="text-[18px] font-semibold text-[#808080]">
-                    Campfire
-                  </p>
-                </label>
-              </div>
-              <div className="flex items-center gap-4 mb-3">
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" className=" text-white" disabled />
-                  <span className="text-[18px] text-[#505050]">❄️</span>
-                  <p className="text-[18px] font-semibold text-[#808080]">
-                    Air Conditioner
-                  </p>
-                </label>
-              </div>
-              <div className="flex items-center gap-4 mb-3">
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" className=" text-white" disabled />
-                  <span className="text-[18px] text-[#505050]">🦗</span>
-                  <p className="text-[18px] font-semibold text-[#808080]">
-                    Summer Night
-                  </p>
-                </label>
-              </div>
-              <div className="flex items-center gap-4 mb-3">
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" className=" text-white" disabled />
-                  <span className="text-[18px] text-[#505050]">🏢</span>
-                  <p className="text-[18px] font-semibold text-[#808080]">
-                    Office
-                  </p>
-                </label>
-              </div>
-              <div className="flex items-center gap-4 mb-3">
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" className=" text-white" disabled />
-                  <span className="text-[18px] text-[#505050]">⛲️</span>
-                  <p className="text-[18px] font-semibold text-[#808080]">
-                    Central Park
-                  </p>
-                </label>
-              </div>
-              <div className="flex items-center gap-4 mb-3">
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" className=" text-white" disabled />
-                  <span className="text-[18px] text-[#505050]">🧠</span>
-                  <p className="text-[18px] font-semibold text-[#808080]">
-                    White Noise
-                  </p>
-                </label>
-              </div>
-              <div className="flex items-center gap-4 mb-3">
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" className=" text-white" disabled />
-                  <span className="text-[18px] text-[#505050]">🧠</span>
-                  <p className="text-[18px] font-semibold text-[#808080]">
-                    Pink Noise
-                  </p>
-                </label>
-              </div>
-              <div className="flex items-center gap-4 mb-3">
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" className=" text-white" disabled />
-                  <span className="text-[18px] text-[#505050]">🧠</span>
-                  <p className="text-[18px] font-semibold text-[#808080]">
-                    Brown Noise
-                  </p>
-                </label>
-              </div>
-              <div className="flex items-center gap-4 mb-3">
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" className=" text-white" disabled />
-                  <span className="text-[18px] text-[#505050]">🌬️</span>
-                  <p className="text-[18px] font-semibold text-[#808080]">
-                    Wind
-                  </p>
-                </label>
-              </div>
-              <div className="flex items-center gap-4 mb-3">
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" className=" text-white" disabled />
-                  <span className="text-[18px] text-[#505050]">🛄</span>
-                  <p className="text-[18px] font-semibold text-[#808080]">
-                    Airport Terminal
-                  </p>
-                </label>
-              </div>
-              <div className="flex items-center gap-4 mb-3">
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" className=" text-white" disabled />
-                  <span className="text-[18px] text-[#505050]">🤿</span>
-                  <p className="text-[18px] font-semibold text-[#808080]">
-                    Underwater
-                  </p>
-                </label>
-              </div>
-              <div className="flex items-center gap-4 mb-3">
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" className=" text-white" disabled />
-                  <span className="text-[18px] text-[#505050]">🐡</span>
-                  <p className="text-[18px] font-semibold text-[#808080]">
-                    Deep Sea
-                  </p>
-                </label>
-              </div>
-              <div className="flex items-center gap-4 mb-3">
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" className=" text-white" disabled />
-                  <span className="text-[18px] text-[#505050]">🐦</span>
-                  <p className="text-[18px] font-semibold text-[#808080]">
-                    Birds in the Woods
-                  </p>
-                </label>
-              </div>
-              <div className="flex items-center gap-4 mb-3">
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" className=" text-white" disabled />
-                  <span className="text-[18px] text-[#505050]">⛺️</span>
-                  <p className="text-[18px] font-semibold text-[#808080]">
-                    Light Rain on Tent
-                  </p>
-                </label>
-              </div>
-              <div className="flex items-center gap-4 mb-3">
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" className=" text-white" disabled />
-                  <span className="text-[18px] text-[#505050]">⌨️</span>
-                  <p className="text-[18px] font-semibold text-[#808080]">
-                    Laptop Keyboard
-                  </p>
-                </label>
-              </div>
-              <div className="flex items-center gap-4 mb-3">
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" className=" text-white" disabled />
-                  <span className="text-[18px] text-[#505050]">🐋</span>
-                  <p className="text-[18px] font-semibold text-[#808080]">
-                    Whales
-                  </p>
-                </label>
-              </div>
-              <div className="flex items-center gap-4 mb-3">
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" className=" text-white" disabled />
-                  <span className="text-[18px] text-[#505050]">🍴</span>
-                  <p className="text-[18px] font-semibold text-[#808080]">
-                    Home Kitchen
-                  </p>
-                </label>
-              </div>
-              <div className="flex items-center gap-4 mb-3">
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" className=" text-white" disabled />
-                  <span className="text-[18px] text-[#505050]">🎳</span>
-                  <p className="text-[18px] font-semibold text-[#808080]">
-                    Bowling Alley
-                  </p>
-                </label>
-              </div>
-              <div className="flex items-center gap-4 mb-3">
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" className=" text-white" disabled />
-                  <span className="text-[18px] text-[#505050]">📀</span>
-                  <p className="text-[18px] font-semibold text-[#808080]">
-                    Record Player Static
-                  </p>
-                </label>
-              </div>
-              <div className="flex items-center gap-4 mb-3">
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" className=" text-white" disabled />
-                  <span className="text-[18px] text-[#505050]">🪐</span>
-                  <p className="text-[18px] font-semibold text-[#808080]">
-                    Outer Space Rumble
-                  </p>
-                </label>
-              </div>
-              <div className="flex items-center gap-4 mb-3">
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" className=" text-white" disabled />
-                  <span className="text-[18px] text-[#505050]">🕰️</span>
-                  <p className="text-[18px] font-semibold text-[#808080]">
-                    Clock Ticking
-                  </p>
-                </label>
-              </div>
-              <div className="flex items-center gap-4 mb-10">
-                <label className="flex items-center gap-2">
-                  <input type="checkbox" className=" text-white" disabled />
-                  <span className="text-[18px] text-[#505050]">🐈</span>
-                  <p className="text-[18px] font-semibold text-[#808080]">
-                    Cat Purr
-                  </p>
-                </label>
-              </div>
+                  <Image
+                    src={"/images/plus.svg"}
+                    className="rounded-lg"
+                    width={60}
+                    height={100}
+                    alt=""
+                  />
+                </div>
+
+                {soundData
+                  .filter((sound) => sound.isPremium === true)
+                  .map((sound) => (
+                    <Field
+                      key={sound.id}
+                      disabled={true}
+                      className="flex items-center gap-2"
+                    >
+                      <Radio
+                        value={sound}
+                        className="group flex size-4 items-center justify-center rounded-full border bg-white data-[disabled]:bg-gray-400 data-[checked]:bg-blue-400"
+                      >
+                        <span className="invisible size-2 rounded-full bg-white group-data-[checked]:visible" />
+                      </Radio>
+                      <Label className="flex items-center justify-center gap-2 text-white data-[disabled]:text-gray-400">
+                        <span className="text-[18px]">{sound.icon}</span>
+                        <p className="text-[18px] font-semibold ">
+                          {sound.title}
+                        </p>
+                      </Label>
+                    </Field>
+                  ))}
+              </RadioGroup>
             </div>
           </TabPanel>
         </TabPanels>

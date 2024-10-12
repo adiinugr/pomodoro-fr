@@ -5,6 +5,7 @@ import { useEffect, useRef } from "react"
 
 import useSound from "use-sound"
 import Circle from "./Circle"
+import { useGlobalSetting } from "@/context/GlobalSettingContext"
 
 interface Pie {
   time: number
@@ -31,8 +32,10 @@ const Pie = ({
   isMinutes,
   color
 }: Pie) => {
+  const { sound } = useGlobalSetting()
+
   const containerRef = useRef(null)
-  const [play] = useSound("/sound/case-closed.mp3")
+  const [play] = useSound(sound.soundPath)
 
   const handleMouseMove = (event: any) => {
     const bounds = event.target.getBoundingClientRect()

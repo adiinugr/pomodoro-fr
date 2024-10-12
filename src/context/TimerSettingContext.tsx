@@ -1,5 +1,6 @@
 "use client"
 
+import { useGlobalSetting } from "@/context/GlobalSettingContext"
 import { ReactNode, createContext, useContext, useState } from "react"
 
 const TimerSettingContext = createContext<any>({} as any)
@@ -16,10 +17,12 @@ interface Timer {
 }
 
 export const TimerSettingProvider = ({ children }: Props) => {
+  const { sound } = useGlobalSetting()
+
   const [timerSetting, setTimerSetting] = useState<Timer>({
     timeType: "minute",
     value: 25,
-    sound: "/sound/case-closed.mp3",
+    sound: sound.soundPath,
     color: "#F25D52"
   })
 
